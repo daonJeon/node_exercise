@@ -15,7 +15,6 @@ function templateHTML(title, list, body) {
     ${list}
     <a href="/create">create</a>
     ${body}
-    </p>
     </body>
     </html>
     `;
@@ -32,10 +31,12 @@ function templateLIST(fileList) {
 }
 
 var app = http.createServer(function (request, response) {
-  var __url = request.url;
-  var queryData = url.parse(__url, true).query;
-  var pathname = url.parse(__url, true).pathname;
+  var _url = request.url;
+  var queryData = url.parse(_url, true).query;
+  var pathname = url.parse(_url, true).pathname;
+
   if (pathname === "/") {
+      console.log(pathname)
     if (queryData.id === undefined) {
       fs.readdir("./data", function (err, fileList) {
         var title = "Welcome";
@@ -51,18 +52,19 @@ var app = http.createServer(function (request, response) {
         response.end(template);
       });
     } else {
-      fs.readFile(`data/${queryData.id}`, "utf-8", function (err, description) {
         fs.readdir("./data", function (err, fileList) {
-          var title = queryData.id;
-          var list = templateLIST(fileList);
-
-          var template = templateHTML(title, list, description);
-          response.writeHead(200);
-          response.end(template);
+            fs.readFile(`data/${queryData.id}`, "utf-8", function (err, description) {
+                var title = queryData.id;
+                var list = templateLIST(fileList);
+    
+                var template = templateHTML(title, list, `<h2>${title}</h2>${description}`);
+                response.writeHead(200);
+                response.end(template);
+            });
         });
-      });
+     
     }
-  } else if (pathname === "/create") {
+  } else if(pathname === '/create'){
     fs.readdir("./data", function (error, filelist) {
       var title = "WEB - create";
       var list = templateList(filelist);
