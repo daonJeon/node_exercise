@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {	display: block;}
+
+body {font-family:'Noto Sans KR','Courier New', Courier, monospace, sans-serif;line-height: 1.2;  letter-spacing: -1px; color:#111; }
+ol,ul,li{	list-style:none}
+blockquote, q {	quotes: none;}
+blockquote:before, blockquote:after, q:before, q:after {	content: '';	content: none;}
+input,textarea,select,button{margin:0;padding:0;border-radius:0;color:#333; font-family: inherit; outline:0;vertical-align:middle; background:none; border:none;}
+a:link,a:visited,a:hover,a:active{text-decoration:none}
+button {background:none; border:none; cursor:pointer; font-family: inherit;}
+select {-webkit-appearance: none;-moz-appearance: none;appearance: none;}
+table {	border-collapse: collapse;	border-spacing: 0;}
+caption {position:absolute; left:-9999px; opacity:0; width:1px; height:1px; }
+img {max-width:100%;border:0;vertical-align:top; }
+a,button,input[type='submit'],input[type='button'],input[type='reset']{border:0;	background:transparent; cursor:pointer; line-height:inherit; font-size:inherit;}
+a {color:inherit; text-decoration: none;}
+.inlineForm {display: inline-block;}
+
+/* input*/
+.textarea,
+.inp-txt input { width:100%;padding:8px; border:1px solid #ddd; background-color: #fff; box-sizing: border-box; }
+.inp-txt input {padding:10px 8px;}
+.textarea { height:200px; resize:none}
+input::placeholder , 
+textarea::placeholder {color:#aaa;}
+
+/* title */
+.main-title {padding:11px 0; font-size:24px; text-align: center; }
+
+/* tab */
+.tab-box {display:flex; justify-content: space-between; align-items: center;}
+.tab-box li {width:100%; }
+.tab-box li a { display:block; padding:11px 0; background:#3B8DBD; text-align:center; color:#fff}
+.tab-box li.on a {background-color:#33363B}
+.task-content {padding:10px 20px}
+.ui {margin:30px 0; padding:10px; background:#fff; }
+
+/* btn */
+.btn {display:inline-block; padding:10px; vertical-align: middle;}
+.btn.blue {background:#3B8DBD; color:#fff;}
+
+/* table */
+.tbl-type01 table {width:100%}
+.tbl-type01 th, .tbl-type01 td {padding:12px 10px; border-bottom:1px solid #ddd; text-align:center;}
+.tbl-type01 th {background:#eee}
+.tbl-type01 td {border-right:1px solid #ddd;}
+.tbl-type01 th + th ,
+.tbl-type01 td + td  {border-left:1px solid #ddd;}
+.tbl-type01 td.left {text-align: left;}
+.tbl-type01 td:last-child {border-right:none}
+
+/* content */
+.input-area ,
+.main-box{margin: 0 auto; padding:50px 0; width:500px; background:#fff }
+.input-area .inp-txt,
+.input-area .textarea ,
+.input-area .btn {width:100%}
+.input-area .btn {margin-top:10px}
+.sub {margin-left:10px; font-size:14px; font-weight:400; color:#aaa;}
+
+.list {border:1px solid #ddd; border-radius: 20px;}
+.list > li > a {display:block; padding:10px 20px ; }
+.list > li + li {border-top:1px solid #ddd; }
+
+.content {border:1px solid #ddd; margin:10px auto; padding:10px; height:200px; overflow: auto;}
+.content h2 {margin-bottom:10px;}
+.content::-webkit-scrollbar {width:10px; background-color: #ddd;;}
+.content::-webkit-scrollbar-thumb {background-color: #aaa;}
+
+.btn-group {text-align: center;}
