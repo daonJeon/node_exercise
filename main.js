@@ -3,6 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js')
+var template2 = require('./lib/template2.js')
 var path = require('path')
 var sanitizeHtml = require('sanitize-html');//원치않는 태그 작동을 막음 
 
@@ -71,7 +72,7 @@ var app = http.createServer(function(request,response){
             fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
                 var title = queryData.id;
                 var sanitizedTitle = sanitizeHtml(title);
-                var sanitizedDescription = sanitizeHtml(description);
+                var sanitizedDescription = description
                 var fileInfo= []
           
                 filelist.forEach(function(file) {
@@ -122,7 +123,10 @@ var app = http.createServer(function(request,response){
               <div class="input-area">
                 <div class="inp-txt">
                   <input type="text" title="글제목" name="title" placeholder="기사 제목 입력">
-                  </div>          
+                </div>          
+                <div class="inp-txt">
+                  <input type="text" title="날짜" name="date" placeholder="기사 발행 날짜 입력">
+                </div>                            
                   <textarea name="description" id="" class="textarea" title="글 내용" placeholder="기사 내용 입력"></textarea>            
                   <input type="submit" class="btn blue" value="공지사항 등록">    
                 </div>
@@ -143,8 +147,10 @@ var app = http.createServer(function(request,response){
       request.on('end',function(){
           var post = qs.parse(body);
           var title = post.title;
+          var date = post.date;
           var description = post.description;
-          fs.writeFile(`data/${title}`, description,'utf8',
+          var html = template2.structure(title, date,``,``);
+          fs.writeFileSync(`data/${title}`,`${html}`,'utf8',
           function(err){
             response.writeHead(302, {Location:`/?id=${title}`});
             response.end();

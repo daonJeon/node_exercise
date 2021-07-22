@@ -71,6 +71,13 @@ textarea::placeholder {color:#aaa;}
 .tbl-type01 td.left {text-align: left;}
 .tbl-type01 td:last-child {border-right:none}
 
+.tbl.type2 { border-top:2px solid #909090; border-bottom:1px solid #909090; }
+.tbl.type2 th, .tbl.type2 td { font-size:18px; line-height:22px; color:#212121; }
+.tbl.type2 > table > thead > tr > th { padding:19px 40px; font-weight:300; border-bottom:1px solid #909090; text-align:left; }
+.tbl.type2 th > strong { font-weight:500; }
+.tbl.type2 .news-cnt { padding:40px 50px; }
+
+
 /* content */
 .input-area ,
 .main-box{margin: 0 auto; padding:50px 0; width:500px; background:#fff }
