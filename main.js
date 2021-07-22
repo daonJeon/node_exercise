@@ -127,6 +127,9 @@ var app = http.createServer(function(request,response){
                 <div class="inp-txt">
                   <input type="text" title="날짜" name="date" placeholder="기사 발행 날짜 입력">
                 </div>                            
+                <div class="inp-txt">
+                  <input type="text" title="날짜" name="subtitle" placeholder="소제목 입력">
+                </div>                            
                   <textarea name="description" id="" class="textarea" title="글 내용" placeholder="기사 내용 입력"></textarea>            
                   <input type="submit" class="btn blue" value="공지사항 등록">    
                 </div>
@@ -148,8 +151,9 @@ var app = http.createServer(function(request,response){
           var post = qs.parse(body);
           var title = post.title;
           var date = post.date;
+          var subtitle = post.subtitle;
           var description = post.description;
-          var html = template2.structure(title, date,``,``);
+          var html = template2.structure(title, date, subtitle,description);
           fs.writeFileSync(`data/${title}`,`${html}`,'utf8',
           function(err){
             response.writeHead(302, {Location:`/?id=${title}`});
