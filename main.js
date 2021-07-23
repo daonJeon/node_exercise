@@ -2,12 +2,11 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
-var template = require('./lib/template.js')
-var template2 = require('./lib/template2.js')
 var path = require('path')
 var sanitizeHtml = require('sanitize-html');//원치않는 태그 작동을 막음 
 
-
+var template = require('./lib/template.js')
+var template2 = require('./lib/template2.js')
 var mimeType = {//확장자에 따라서 content-type header 값을 동적으로 생성
   //html  단일 페이지 뿐만 아니라 모든 정적요소 불러오기 위함
   ".ico": "image/x-icon",
@@ -45,8 +44,8 @@ var app = http.createServer(function(request,response){
           var title = '클릭한 공지사항 제목이 보입니다';
           var description = '클릭한 공지사항 내용이 보입니다. ';
           var fileInfo= []
-           
-          filelist.forEach(function(file) {
+          
+          if(filelist > null){ filelist.forEach(function(file) {
             fs.stat('./data/' + file, function (err, stats) {                          
               createDate = new Date( stats.birthtimeMs );
               fileInfo.push({ fileDate:createDate.ymdhms(), fileName:file });
@@ -63,16 +62,15 @@ var app = http.createServer(function(request,response){
             
           });
           
-          
+        }
         });
       } else {
           fs.readdir('./data', function(error, filelist) {
             var filteredId = path.parse(queryData.id).base
-  
+
             fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
                 var title = queryData.id;
                 var sanitizedTitle = sanitizeHtml(title);
-                var sanitizedDescription = description
                 var fileInfo= []
           
                 filelist.forEach(function(file) {
@@ -85,7 +83,8 @@ var app = http.createServer(function(request,response){
                     var list = template.list(fileInfo);
                     var html = template.structure(title, list, `
                     <div class="content">
-                    <h2>${sanitizedTitle}</h2>${sanitizedDescription}
+                    <h2>${sanitizedTitle}</h2>
+                    ${description}
                     </div>`,
                     `
                       <a href="/create" class="btn blue">create</a> 
@@ -122,6 +121,9 @@ var app = http.createServer(function(request,response){
             <form action="/create_process" method="post">
               <div class="input-area">
                 <div class="inp-txt">
+                  <input type="text" title="등록 넘버" name="fileNum" placeholder="등록 넘버">
+                </div>          
+                <div class="inp-txt">
                   <input type="text" title="글제목" name="title" placeholder="기사 제목 입력">
                 </div>          
                 <div class="inp-txt">
@@ -130,8 +132,16 @@ var app = http.createServer(function(request,response){
                 <div class="inp-txt">
                   <input type="text" title="날짜" name="subtitle" placeholder="소제목 입력">
                 </div>                            
-                  <textarea name="description" id="" class="textarea" title="글 내용" placeholder="기사 내용 입력"></textarea>            
-                  <input type="submit" class="btn blue" value="공지사항 등록">    
+                <div class="inp-txt">
+                  <input type="text" title="이미지소스" name="imgSrc" placeholder="이미지소스">
+                </div>                            
+
+                <textarea name="description" id="" class="textarea" title="글 내용" placeholder="기사 내용 입력"></textarea>            
+                <div class="inp-chk">
+                  <input type="checkbox" name="sourceChk">
+                  <input type="text" name="sourceName">
+                </div>
+                <input type="submit" class="btn blue" value="공지사항 등록">    
                 </div>
               </div>
               </form>
@@ -149,15 +159,19 @@ var app = http.createServer(function(request,response){
       })//node js로 접속 들어올때마다 콜백 함수로 node 호출
       request.on('end',function(){
           var post = qs.parse(body);
+          var fileNum = post.fileNum;
           var title = post.title;
           var date = post.date;
           var subtitle = post.subtitle;
+          var imgSrc = post.imgSrc;
           var description = post.description;
-          var html = template2.structure(title, date, subtitle,description);
-          fs.writeFileSync(`data/${title}`,`${html}`,'utf8',
+          var sourceChk = post.sourceChk;
+          var sourceName = post.sourceName;
+          var html = template2.structure(fileNum,title, date, subtitle, imgSrc, description, sourceChk, sourceName);
+          fs.writeFileSync(`data/news-cnt-${fileNum}`,`${html}`,'utf8',
           function(err){
-            response.writeHead(302, {Location:`/?id=${title}`});
-            response.end();
+            response.writeHead(302, {Location:`/?id=${fileNum}`});
+            response.end(html);
           })      
       })
   
@@ -177,10 +191,16 @@ var app = http.createServer(function(request,response){
     
               setTimeout(function(){
                 var list = template.list(fileInfo);
-                var html = template.structure(title, list,          
+                var fileNum = post.fileNum;
+                var title = post.title;
+                var date = post.date;
+                var subtitle = post.subtitle;
+                var description = post.description;
+
+                var html = template2.structure(title, list,          
                   `
                   <form action="/update_process" method="post">
-                    <input type="hidden" name="id" value="${title}"><!--업데이트 될 데이터가 쉉될수 있으므로 hidden 에 저장-->
+                    <input type="hidden" name="id" value="${fileNum}">
                     <div class="input-area">
                     <div class="inp-txt">
                       <input type="text" title="글제목" name="title" placeholder="기사 제목 입력" value="${title}">
@@ -215,13 +235,16 @@ var app = http.createServer(function(request,response){
       request.on("end",function(){
         var post = qs.parse(body)      
         var id = post.id;
+        var fileNum = post.fileNum;
         var title = post.title;
+        var date = post.date;
+        var subtitle = post.subtitle;
         var description = post.description;
   
-        fs.rename(`data/${id}`,`data/${title}`,function(error){
-          fs.writeFile(`data/${title}`, description,'utf8',
+        fs.rename(`data/${fileNum}`,`data/${title}`,function(error){
+          fs.writeFile(`data/${fileNum}`, description,'utf8',
           function(err){
-            response.writeHead(302, {Location:`/?id=${title}`});
+            response.writeHead(302, {Location:`/?id=${fileNum}`});
             response.end();
           })     
         })
