@@ -89,7 +89,9 @@ var app = http.createServer(function(request,response){
                     var html = template.structure(title, list, `
                     <div class="content">
                     <h2>${title}</h2>
+                    <pre>
                     ${description}
+                    </pre>
                     </div>`,
                     `
                       <a href="/create" class="btn blue">create</a> 
