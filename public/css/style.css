@@ -76,14 +76,29 @@ textarea::placeholder {color:#aaa;}
 .tbl.type2 > table > thead > tr > th { padding:19px 40px; font-weight:300; border-bottom:1px solid #909090; text-align:left; }
 .tbl.type2 th > strong { font-weight:500; }
 .tbl.type2 .news-cnt { padding:40px 50px; }
+.inp-txt + .inp-txt,
+.inp-txt + textarea,
+textarea + .inp-chk,
+.inp-chk + .inp-txt {margin-top:10px}
 
+.inp-chk {position:relative;}
+.inp-chk input.check {-webkit-appearance:none; -moz-appearance: none; appearance: none;}
+.inp-chk input.check {position:relative; display:inline-block; width:20px; height:20px; border:1px solid #aaa; vertical-align: middle;
+margin:0 5px 0 0; border-radius:3px}
+.inp-chk input.check:checked:before,
+.inp-chk input.check:checked:after {display:block; position:absolute; transform:rotate(45deg); content:''; background:#d21144; }
+.inp-chk input.check:checked:before {width:2px; height:11px; top:4px; left:10px; }
+.inp-chk input.check:checked:after {width:4px; height:2px; top:9px; left:4px;}
+.inp-chk input.check + label {vertical-align:middle;}
 
 /* content */
 .input-area ,
 .main-box{margin: 0 auto; padding:50px 0; width:500px; background:#fff }
-.input-area .inp-txt,
+.input-area div.inp-txt,
 .input-area .textarea ,
 .input-area .btn {width:100%}
+.input-area  span {display:inline-block;}
+.input-area  span.inp-txt input {width:auto; margin-left:10px;}
 .input-area .btn {margin-top:10px}
 .sub {margin-left:10px; font-size:14px; font-weight:400; color:#aaa;}
 

@@ -3,7 +3,6 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var path = require('path')
-var sanitizeHtml = require('sanitize-html');//원치않는 태그 작동을 막음 
 
 var template = require('./lib/template.js')
 var template2 = require('./lib/template2.js')
@@ -39,38 +38,44 @@ var app = http.createServer(function(request,response){
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
     if(pathname === '/'){
-      if(queryData.id === undefined){
+      if(queryData.id === undefined){//첫화면 
         fs.readdir('./data', function(error, filelist){
+          var pageTitle = 'Main';
           var title = '클릭한 공지사항 제목이 보입니다';
           var description = '클릭한 공지사항 내용이 보입니다. ';
           var fileInfo= []
           
-          if(filelist > null){ filelist.forEach(function(file) {
-            fs.stat('./data/' + file, function (err, stats) {                          
-              createDate = new Date( stats.birthtimeMs );
-              fileInfo.push({ fileDate:createDate.ymdhms(), fileName:file });
-            })
+          if(filelist== undefined) return 
+          else {
+            filelist.forEach(function(file) {
+              fs.stat('./data/' + file, function (err, stats) {     
+                createDate = new Date( stats.birthtimeMs );
+                fileInfo.push({ fileDate:createDate.ymdhms(), fileName:file });
+              })  
+            });
 
             setTimeout(function(){
               var list = template.list(fileInfo);
-              var html = template.structure(title, list, `<div class="content"><h2>${title}</h2>${description}</div>`,`
-              <a href="/create" class="btn blue">create</a>`);
-              
+              var html = template.structure(pageTitle, title, list, 
+              `<div class="content"><h2>${title}</h2>${description}</div>`,
+              `<a href="/create" class="btn blue">create</a>`);
+
               response.writeHead(200);
               response.end(html);
-            },100)
+            },10)
             
-          });
+          }
           
-        }
         });
       } else {
-          fs.readdir('./data', function(error, filelist) {
-            var filteredId = path.parse(queryData.id).base
+        fs.readdir('./data', function(error, filelist) {
+          console.log(path.parse(queryData.id))
+          var filteredId = path.parse(queryData.id).base          
 
             fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-                var title = queryData.id;
-                var sanitizedTitle = sanitizeHtml(title);
+              console.log(queryData.id)
+                var fileNum = queryData.id;                
+                var title = filteredId
                 var fileInfo= []
           
                 filelist.forEach(function(file) {
@@ -83,14 +88,14 @@ var app = http.createServer(function(request,response){
                     var list = template.list(fileInfo);
                     var html = template.structure(title, list, `
                     <div class="content">
-                    <h2>${sanitizedTitle}</h2>
+                    <h2>${title}</h2>
                     ${description}
                     </div>`,
                     `
                       <a href="/create" class="btn blue">create</a> 
-                      <a href="/update?id=${sanitizedTitle}" class="btn blue">update</a> 
+                      <a href="/update?id=${fileNum}" class="btn blue">update</a> 
                       <form action="delete_process" method="post" onsubmit="" class="inlineForm">
-                        <input type="hidden" name="id" value="${sanitizedTitle}">
+                        <input type="hidden" name="id" value="${title}">
                         <input type="submit" class="btn blue" value="delete">
                       </form>
       
@@ -106,58 +111,64 @@ var app = http.createServer(function(request,response){
       }
     } else if(pathname === '/create'){
       fs.readdir('./data', function(error, filelist){
-        var title = ' Notice - create';        
+        var pageTitle = 'Notice create'; 
+        var title = 'Notice - create';        
         var fileInfo= []
-          
-        filelist.forEach(function(file) {
-          fs.stat('./data/' + file, function (err, stats) {                          
-            createDate = new Date( stats.birthtimeMs );
-            fileInfo.push({ fileDate:createDate.ymdhms(), fileName:file });
-          })
+        
+        if(filelist.length > 0 ){
+          filelist.forEach(function(file) {
+            fs.stat('./data/' + file, function (err, stats) {
+              createDate = new Date( stats.birthtimeMs );
+              fileInfo.push({ fileDate:createDate.ymdhms(), fileName:file });
+            })
+          });           
+        }
+        setTimeout(function(){
+          var list = template.list(fileInfo);
+          var html = template.structure(pageTitle, title, list, `
+          <form action="/create_process" method="post">
+            <div class="input-area">
+              <div class="inp-txt">
+                <input type="text" title="등록 넘버" name="fileNum" placeholder="등록 넘버">
+              </div>          
+              <div class="inp-txt">
+                <input type="text" title="글제목" name="title" placeholder="기사 제목 입력">
+              </div>          
+              <div class="inp-txt">
+                <input type="text" title="날짜" name="date" placeholder="기사 발행 날짜 입력">
+              </div>                            
+              <div class="inp-txt">
+                <input type="text" title="날짜" name="subtitle" placeholder="소제목 입력">
+              </div>                            
+              <div class="inp-txt">
+                <input type="text" title="이미지소스" name="imgSrc" placeholder="이미지소스">
+              </div>                            
 
-          setTimeout(function(){
-            var list = template.list(fileInfo);
-            var html = template.structure(title, list, `
-            <form action="/create_process" method="post">
-              <div class="input-area">
-                <div class="inp-txt">
-                  <input type="text" title="등록 넘버" name="fileNum" placeholder="등록 넘버">
-                </div>          
-                <div class="inp-txt">
-                  <input type="text" title="글제목" name="title" placeholder="기사 제목 입력">
-                </div>          
-                <div class="inp-txt">
-                  <input type="text" title="날짜" name="date" placeholder="기사 발행 날짜 입력">
-                </div>                            
-                <div class="inp-txt">
-                  <input type="text" title="날짜" name="subtitle" placeholder="소제목 입력">
-                </div>                            
-                <div class="inp-txt">
-                  <input type="text" title="이미지소스" name="imgSrc" placeholder="이미지소스">
-                </div>                            
-
-                <textarea name="description" id="" class="textarea" title="글 내용" placeholder="기사 내용 입력"></textarea>            
-                <div class="inp-chk">
-                  <input type="checkbox" name="sourceChk">
-                  <input type="text" name="sourceName">
-                </div>
-                <input type="submit" class="btn blue" value="공지사항 등록">    
-                </div>
+              <textarea name="description" id="" class="textarea" title="글 내용" placeholder="기사 내용 입력"></textarea>            
+              <span class="inp-chk">
+                <input type="checkbox" id="chk1" class="check" name="sourceChk">
+                <label for="chk1">출처 보이기</label>
+              </span>
+              <span class="inp-txt">
+                <input type="text" name="sourceName">
+              </span>
+              <input type="submit" class="btn blue" value="공지사항 등록">    
               </div>
-              </form>
-                `,``);
-            
-            response.writeHead(200);
-            response.end(html);
-          },100)
-        });
+            </div>
+            </form>
+              `,``);
+          
+          response.writeHead(200);
+          response.end(html);
+        },100)
+        
       })
     } else if(pathname === '/create_process'){//Post 방식으로 보낸 데이터를 Node js에서 불러오기!!
       var body = '';
       request.on('data',function(data){//
           body += data;
       })//node js로 접속 들어올때마다 콜백 함수로 node 호출
-      request.on('end',function(){
+      request.on('end',function(){          
           var post = qs.parse(body);
           var fileNum = post.fileNum;
           var title = post.title;
@@ -165,12 +176,13 @@ var app = http.createServer(function(request,response){
           var subtitle = post.subtitle;
           var imgSrc = post.imgSrc;
           var description = post.description;
+          console.log(sourceChk)
           var sourceChk = post.sourceChk;
           var sourceName = post.sourceName;
           var html = template2.structure(fileNum,title, date, subtitle, imgSrc, description, sourceChk, sourceName);
           fs.writeFileSync(`data/news-cnt-${fileNum}`,`${html}`,'utf8',
           function(err){
-            response.writeHead(302, {Location:`/?id=${fileNum}`});
+            response.writeHead(302, {Location:`/?id=news-cnt-${fileNum}`});
             response.end(html);
           })      
       })
@@ -179,9 +191,8 @@ var app = http.createServer(function(request,response){
       fs.readdir('./data', function(error, filelist) {
         var filteredId = path.parse(queryData.id).base
         fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
+            var pageTitle = 'Notice Update';
             var title = queryData.id;
-            var sanitizedTitle = sanitizeHtml(title);
-            var sanitizedDescription = sanitizeHtml(description);
             var fileInfo= []
             filelist.forEach(function(file) {
               fs.stat('./data/' + file, function (err, stats) {                          
@@ -197,7 +208,7 @@ var app = http.createServer(function(request,response){
                 var subtitle = post.subtitle;
                 var description = post.description;
 
-                var html = template2.structure(title, list,          
+                var html = template2.structure(pageTitle, title, list,          
                   `
                   <form action="/update_process" method="post">
                     <input type="hidden" name="id" value="${fileNum}">
@@ -277,7 +288,6 @@ var app = http.createServer(function(request,response){
     var date = this.getDate().toString();        
     return `${year}/${month[1] ? month : "0" + month[0]}/${date[1] ? date : "0" + date[0]}`;    
  }
-
 
 });
 app.listen(3000);

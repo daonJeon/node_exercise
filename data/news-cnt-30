@@ -1,0 +1,37 @@
+     
+    <div class="tbl type2">
+    <table>
+        <caption></caption>
+        <colgroup>
+            <col style='width:auto'/>
+            <col style='width:18%'/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope='col'><strong>제목1</strong></th>
+                <th scope='col' class="txt-c">2021.06.21</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="news-cnt" colspan="2">
+                    <div class="pop-cnt">
+                        <p class="mb15">
+                            <strong>소제목1</strong>
+                        </p>
+                        <p class="img"><img src="/pc/images/news/img_news-30.png" alt="이미지"></p>
+                    </div>
+
+                    <div class="pop-cnt">
+                    <pre>
+                    내용
+                    </pre>
+                    undefined
+                    <strong>■ 관련 이미지 및 기사 출처 :</strong>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+      
