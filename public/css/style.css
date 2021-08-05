@@ -93,7 +93,7 @@ margin:0 5px 0 0; border-radius:3px}
 
 /* content */
 .input-area ,
-.main-box{margin: 0 auto; padding:50px 0; width:500px; background:#fff }
+.main-box{margin: 0 auto; padding:50px 0; width:1200px; background:#fff }
 .input-area div.inp-txt,
 .input-area .textarea ,
 .input-area .btn {width:100%}
@@ -106,9 +106,10 @@ margin:0 5px 0 0; border-radius:3px}
 .list > li > a {display:block; padding:10px 20px ; }
 .list > li + li {border-top:1px solid #ddd; }
 
-.content {border:1px solid #ddd; margin:10px auto; padding:10px; height:200px; overflow: auto;}
+.content {border:1px solid #ddd; margin:10px auto; padding:10px; height:900px; overflow: auto;}
 .content h2 {margin-bottom:10px;}
 .content::-webkit-scrollbar {width:10px; background-color: #ddd;;}
 .content::-webkit-scrollbar-thumb {background-color: #aaa;}
 
 .btn-group {text-align: center;}
+pre {white-space: normal;}

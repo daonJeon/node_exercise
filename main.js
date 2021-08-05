@@ -89,9 +89,7 @@ var app = http.createServer(function(request,response){
                     var html = template.structure(title, list, `
                     <div class="content">
                     <h2>${title}</h2>
-                    <pre>
                     ${description}
-                    </pre>
                     </div>`,
                     `
                       <a href="/create" class="btn blue">create</a> 
@@ -101,7 +99,7 @@ var app = http.createServer(function(request,response){
                         <input type="submit" class="btn blue" value="delete">
                       </form>
       
-                    `);
+                    `,``);
                     
                     response.writeHead(200);
                     response.end(html);
@@ -265,10 +263,10 @@ var app = http.createServer(function(request,response){
     } else if(pathname === '/delete_process'){ 
       var body = '';
       request.on('data', function(data){
-          body = body + data;
+        body = body + data;
       });
       request.on('end', function(){
-          var post = qs.parse(body);
+        var post = qs.parse(body);
           var id = post.id;
           var filteredId = path.parse(id).base;
           fs.unlink(`data/${filteredId}`, function(error){
